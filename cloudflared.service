@@ -1,5 +1,5 @@
 [Unit]
-Description=cftun-%i
+Description=cloudflared
 After=network.target
 Documentation="https://github.com/flpydsk/cloudflared-configs.git"
 
