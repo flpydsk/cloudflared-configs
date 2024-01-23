@@ -1,0 +1,50 @@
+[Unit]
+Description=DoH
+Wants=network-online.target nss-lookup.target
+Before=nss-lookup.target
+Documentation="https://github.com/flpydsk/cloudflared-configs.git"
+
+[Service]
+Environment="TUNNEL_DNS_UPSTREAM=https://security.cloudflare-dns.com/dns-query"
+Environment="TUNNEL_DNS_BOOTSTRAP=https://1.1.1.1/dns-query,https://1.0.0.1/dns-query,https://[2606:4700:4700::1111]/dns-query,https://[2606:4700:4700::1001]/dns-query"
+Environment="TUNNEL_DNS_ADDRESS=::1"
+Environment="TUNNEL_DNS_PORT=53"
+ExecStartPost=/usr/bin/bash -c 'resolv="/etc/resolv.conf"; if [[ "$(lsattr "$resolv" | cut -d " " -f1)" != *i* ]]; then sed -i "/^nameserver/d" "$resolv" && echo "nameserver ::1" >> "$resolv" && chattr +i "$resolv"; fi'
+ExecStart=/usr/bin/cloudflared proxy-dns
+TimeoutStartSec=0
+Type=simple
+PermissionsStartOnly=true
+DynamicUser=yes
+ProtectSystem=strict
+Restart=on-failure
+RestartSec=5s
+ProtectControlGroups=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectClock=yes
+ProtectHostname=yes
+ProtectHome=yes
+ProtectProc=invisible
+ProcSubset=pid
+PrivateMounts=true
+PrivateDevices=true
+PrivateTmp=yes
+UMask=266
+DevicePolicy=closed
+RemoveIPC=yes
+NoNewPrivileges=yes
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged
+SystemCallArchitectures=native
+RestrictNamespaces=true
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictSUIDSGID=true
+RestrictRealtime=true
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+
+[Install]
+WantedBy=multi-user.target

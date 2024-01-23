@@ -1,0 +1,42 @@
+cloudflared-configs
+Licensed under the Unlicense.
+
+A collection of services for cloudflared
+Attempts have been made to restrict the permissions of cloudflared as much as possible
+These are only used on RHEL9 and Rockylinux9, not all systemd params are supported on all distros
+
+cloudflared-configs:
+  cloudflared.service    - a cloudflared service with no external file depends, runs restricted and with the tunnel token hidden from ps
+    Usage:
+      1. Download cloudflared.service to /etc/systemd/system
+           curl -o /etc/systemd/system/cloudflared.service https://raw.githubusercontent.com/flpydsk/cloudflared-configs/master/cloudflared.service
+      2. edit the file and replace <TUNNEL TOKEN> with the tunnel token
+           vim /etc/systemd/system/cloudflared.service
+      3. Always reload the service after editing with
+           systemctl daemon-reload
+      4. Enable the service
+           sudo systemctl enable --now cloudflared.service
+
+  tunnel:
+    cftun@.service       - Cloudflared systemd service, place this in /etc/systemd/system/
+    example.conf         - Config file, loaded as environment vars
+      Usage:
+        1. Download cftun@.service to /etc/systemd/system
+            curl -o /etc/systemd/system/cftun@.service https://raw.githubusercontent.com/flpydsk/cloudflared-configs/master/tunnel/cftun@.service
+        2. create the dir /etc/cftun
+             mkdir /etc/cftun
+        3. Download example.conf to /etc/cftun and rename it to what you need
+             curl -o /etc/cftun/example.conf https://raw.githubusercontent.com/flpydsk/cloudflared-configs/master/tunnel/example.conf
+        2. edit the file and replace <TUNNEL TOKEN> with the tunnel token
+             vim /etc/cftun/example.conf
+        3. Start and enable the service
+             sudo systemctl enable --now cftun@example.service or replace example with the name of your file before .conf
+
+  dns:
+    doh.service          - DNS over HTTPS service, This will rewrite /etc/resolv.conf nameservers.
+    doh64.service        - DNS64 over HTTPS Service, Not intended to be used as the system nameserver, listens on [::1]:5364
+     usage:
+       1. Download to /etc/systemd/system
+            curl -o /etc/systemd/system/dns.service https://raw.githubusercontent.com/flpydsk/cloudflared-configs/master/dns/dns.service  
+       2. sudo systemctl enable --now doh.service or sudo systemctl enable --now doh64.service
+

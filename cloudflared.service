@@ -1,0 +1,45 @@
+[Unit]
+Description=cftun-%i
+After=network.target
+Documentation="https://github.com/flpydsk/cloudflared-configs.git"
+
+[Service]
+Environment="TUNNEL_TOKEN=<TUNNEL TOKEN>"
+Environment="TUNNEL_POST_QUANTUM=true"
+Environment="TUNNEL_ORIGIN_ENABLE_HTTP2=true"
+Environment="NO_AUTOUPDATE=true"
+ExecStart=/usr/bin/cloudflared --label %i-%H tunnel run
+TimeoutStartSec=0
+Type=notify
+Restart=on-failure
+RestartSec=5s
+DynamicUser=true
+ProtectControlGroups=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectClock=true
+ProtectHostname=true
+ProtectHome=true
+ProtectSystem=strict
+ProtectProc=invisible
+ProcSubset=all
+PrivateMounts=true
+PrivateDevices=true
+PrivateTmp=true
+UMask=266
+RemoveIPC=true
+NoNewPrivileges=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged
+SystemCallArchitectures=native
+RestrictNamespaces=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictSUIDSGID=true
+RestrictRealtime=true
+CapabilityBoundingSet=
+
+[Install]
+WantedBy=multi-user.target
