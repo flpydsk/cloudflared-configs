@@ -6,7 +6,6 @@ Documentation="https://github.com/flpydsk/cloudflared-configs.git"
 [Service]
 Environment="TUNNEL_TOKEN=<TUNNEL TOKEN>"
 Environment="TUNNEL_POST_QUANTUM=true"
-Environment="TUNNEL_ORIGIN_ENABLE_HTTP2=true"
 Environment="NO_AUTOUPDATE=true"
 ExecStart=/usr/bin/cloudflared --label %i-%H tunnel run
 TimeoutStartSec=0
